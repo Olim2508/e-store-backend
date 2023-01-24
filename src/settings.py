@@ -14,6 +14,7 @@ import os
 import environ
 from pathlib import Path
 
+from .additional_settings.jwt_settings import *
 env = environ.Env()
 environ.Env.read_env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -58,7 +59,6 @@ AUTH_USER_MODEL = 'auth_app.User'
 LOGIN_URL = 'rest_framework:login'
 LOGOUT_URL = 'rest_framework:logout'
 
-REST_AUTH_TOKEN_MODEL = None
 
 MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
