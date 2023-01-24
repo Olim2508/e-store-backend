@@ -43,6 +43,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # apps
     "main",
+    "auth_app",
     # third party libraries
     "rest_framework",
     "django_filters",
@@ -51,6 +52,11 @@ INSTALLED_APPS = [
     'dj_rest_auth',
     'rest_framework_simplejwt.token_blacklist',
 ]
+
+AUTH_USER_MODEL = 'auth_app.User'
+
+LOGIN_URL = 'rest_framework:login'
+LOGOUT_URL = 'rest_framework:logout'
 
 REST_AUTH_TOKEN_MODEL = None
 

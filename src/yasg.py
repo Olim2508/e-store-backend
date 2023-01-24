@@ -15,7 +15,7 @@ schema_view_param = {
 
 schema_view = get_schema_view(
     openapi.Info(
-        title="Django Image Manager",
+        title="Django E-store API",
         default_version="v1",
         description="DRF operations",
     ),
