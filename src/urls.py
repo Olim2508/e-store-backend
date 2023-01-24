@@ -26,7 +26,7 @@ urlpatterns = [
     path('', login_required(RedirectView.as_view(pattern_name='admin:index'))),
     path('api/', include('rest_framework.urls')),
     path("auth/", include("auth_app.urls")),
-    # path("main/", include("main.urls")),
+    path("main/", include("main.urls")),
 ]
 
 urlpatterns += swagger_url
