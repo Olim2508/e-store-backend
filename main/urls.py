@@ -3,14 +3,12 @@ from rest_framework.routers import DefaultRouter
 
 from . import views
 
-app_name = 'main'
+app_name = "main"
 
 router = DefaultRouter()
-router.register('category', views.ProductCategoryViewSet, basename='category')
-router.register('product', views.ProductViewSet, basename='product')
+router.register("category", views.ProductCategoryViewSet, basename="category")
+router.register("product", views.ProductViewSet, basename="product")
 
-urlpatterns = [
-
-]
+urlpatterns = []
 
 urlpatterns += router.urls

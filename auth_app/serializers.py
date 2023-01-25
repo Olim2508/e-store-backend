@@ -1,16 +1,17 @@
-from django.utils import timezone
-from django.contrib.auth import get_user_model
-from rest_framework import serializers
-from .services import SignUpService
 from dj_rest_auth import serializers as auth_serializers
+from django.contrib.auth import get_user_model
+from django.utils import timezone
+from rest_framework import serializers
+
+from .services import SignUpService
 
 User = get_user_model()
 
 error_messages = {
-    'not_active': 'Your account is not active',
-    'wrong_credentials': 'Entered email or password is incorrect',
-    'already_registered': "User is already registered with this e-mail address",
-    'password_not_match': "The two password fields didn't match",
+    "not_active": "Your account is not active",
+    "wrong_credentials": "Entered email or password is incorrect",
+    "already_registered": "User is already registered with this e-mail address",
+    "password_not_match": "The two password fields didn't match",
 }
 
 
@@ -49,26 +50,25 @@ class LogInSerializer(auth_serializers.LoginSerializer):
     email = serializers.EmailField()
 
     def validate(self, attrs: dict):
-        email: str = attrs.get('email')
-        password: str = attrs.pop('password')
+        email: str = attrs.get("email")
+        password: str = attrs.pop("password")
         user = self._validate_email(email, password)
         if user:
             if not user.is_active:
-                msg = {'email': error_messages['not_active']}
+                msg = {"email": error_messages["not_active"]}
                 raise serializers.ValidationError(msg)
         else:
             user = SignUpService.get_user_or_none(email)
             if not user:
-                msg = {'email': error_messages['wrong_credentials']}
+                msg = {"email": error_messages["wrong_credentials"]}
                 raise serializers.ValidationError(msg)
             if not user.is_active:
-                msg = {'email': error_messages['not_active']}
+                msg = {"email": error_messages["not_active"]}
                 raise serializers.ValidationError(msg)
-            msg = {'email': error_messages['wrong_credentials']}
+            msg = {"email": error_messages["wrong_credentials"]}
             raise serializers.ValidationError(msg)
         user.last_login = timezone.now()
-        user.save(update_fields=['last_login'])
+        user.save(update_fields=["last_login"])
 
-        attrs['user'] = user
+        attrs["user"] = user
         return attrs
-

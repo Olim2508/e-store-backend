@@ -12,7 +12,9 @@ class BaseModel(models.Model):
 class Product(models.Model):
     name = models.CharField(max_length=255)
     price = models.IntegerField()
-    category = models.ForeignKey("main.ProductCategory", on_delete=models.CASCADE, related_name="product")
+    category = models.ForeignKey(
+        "main.ProductCategory", on_delete=models.CASCADE, related_name="product"
+    )
 
     def __str__(self):
         return self.name
@@ -34,13 +36,14 @@ class Order(models.Model):
 
 
 class OrderDetail(models.Model):
-    order = models.ForeignKey("main.Order", on_delete=models.CASCADE, related_name="order_detail")
-    product = models.ForeignKey(Product, on_delete=models.CASCADE, related_name="product")
+    order = models.ForeignKey(
+        "main.Order", on_delete=models.CASCADE, related_name="order_detail"
+    )
+    product = models.ForeignKey(
+        Product, on_delete=models.CASCADE, related_name="product"
+    )
     quantity = models.IntegerField()
     price = models.IntegerField()
 
     def __str__(self):
         return f"{self.id}, order_id={self.order.id}"
-
-
-

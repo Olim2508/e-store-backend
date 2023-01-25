@@ -10,11 +10,12 @@ For the full list of settings and their values, see
 https://docs.djangoproject.com/en/4.1/ref/settings/
 """
 import os
-
-import environ
 from pathlib import Path
 
+import environ
+
 from .additional_settings.jwt_settings import *
+
 env = environ.Env()
 environ.Env.read_env()
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -50,14 +51,14 @@ INSTALLED_APPS = [
     "django_filters",
     "corsheaders",
     "drf_yasg",
-    'dj_rest_auth',
-    'rest_framework_simplejwt.token_blacklist',
+    "dj_rest_auth",
+    "rest_framework_simplejwt.token_blacklist",
 ]
 
-AUTH_USER_MODEL = 'auth_app.User'
+AUTH_USER_MODEL = "auth_app.User"
 
-LOGIN_URL = 'rest_framework:login'
-LOGOUT_URL = 'rest_framework:logout'
+LOGIN_URL = "rest_framework:login"
+LOGOUT_URL = "rest_framework:logout"
 
 
 MIDDLEWARE = [
@@ -68,6 +69,7 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
+    "main.middleware.SimpleMiddleware",
 ]
 
 ROOT_URLCONF = "src.urls"
@@ -151,8 +153,8 @@ REST_FRAMEWORK = {
     "DEFAULT_PAGINATION_CLASS": "rest_framework.pagination.PageNumberPagination",
     "PAGE_SIZE": 10,
     "DEFAULT_FILTER_BACKENDS": ("django_filters.rest_framework.DjangoFilterBackend",),
-    'DEFAULT_AUTHENTICATION_CLASSES': (
-        'dj_rest_auth.jwt_auth.JWTCookieAuthentication',
-        'rest_framework_simplejwt.authentication.JWTAuthentication',
+    "DEFAULT_AUTHENTICATION_CLASSES": (
+        "dj_rest_auth.jwt_auth.JWTCookieAuthentication",
+        "rest_framework_simplejwt.authentication.JWTAuthentication",
     ),
 }
