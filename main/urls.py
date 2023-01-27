@@ -9,6 +9,8 @@ router = DefaultRouter()
 router.register("category", views.ProductCategoryViewSet, basename="category")
 router.register("product", views.ProductViewSet, basename="product")
 
-urlpatterns = []
+urlpatterns = [
+    path("order/create/", views.OrderCreate.as_view({"post": "create"}), name='order_create')
+]
 
 urlpatterns += router.urls

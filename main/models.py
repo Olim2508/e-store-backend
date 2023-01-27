@@ -29,7 +29,7 @@ class ProductCategory(models.Model):
 
 class Order(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE, related_name="order")
-    amount = models.IntegerField()
+    amount = models.IntegerField(null=True, blank=True)
 
     def __str__(self):
         return f"{self.id} + {self.user}"

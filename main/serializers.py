@@ -1,7 +1,10 @@
-from rest_framework import serializers
+from typing import List
 
-from main.models import Product, ProductCategory
-from main.services import ProductService
+from rest_framework import serializers
+from rest_framework.exceptions import ValidationError
+
+from main.models import Product, ProductCategory, Order, OrderDetail
+from main.services import ProductService, OrderService
 
 
 class ProductCategorySerializer(serializers.ModelSerializer):
@@ -29,3 +32,24 @@ class ProductSerializer(serializers.ModelSerializer):
             }
         )
         return ret
+
+
+class OrderDetailSerializer(serializers.Serializer):
+    product_id = serializers.IntegerField(min_value=1)
+    quantity = serializers.IntegerField(min_value=1)
+
+
+class OrderSerializer(serializers.Serializer):
+    orders = serializers.ListField(child=OrderDetailSerializer())
+
+    def validate(self, data):
+        for item in data['orders']:
+            if not ProductService.is_product_exists(item['product_id']):
+                raise ValidationError({"product_id": f"Product id {item['product_id']} doesn't exists"})
+        return data
+
+    def save(self, **kwargs):
+        data: List[dict] = self.validated_data['orders']
+        user = self.context['request'].user
+        OrderService.create_bulk_order_details(Order(user=user), data)
+
