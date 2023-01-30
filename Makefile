@@ -5,7 +5,7 @@ freeze:
 	pip freeze > requirements.txt
 
 req:
-	pip install requirements.txt
+	pip install -r requirements.txt
 
 styling:
 	flake8 . && black . && isort .

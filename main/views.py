@@ -1,3 +1,9 @@
+import datetime
+
+import requests
+from django.views.generic import TemplateView
+from django.utils.decorators import method_decorator
+from django.views.decorators.cache import cache_page
 from rest_framework import viewsets, mixins, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -45,3 +51,18 @@ class OrderCreate(mixins.CreateModelMixin, GenericViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response({"status": True}, status=status.HTTP_201_CREATED, headers=headers)
 
+
+BASE_URL = 'https://httpbin.org/'
+
+
+@method_decorator(cache_page(60 * 5), name='dispatch')
+class ApiCalls(TemplateView):
+    template_name = 'home.html'
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        response = requests.get(f'{BASE_URL}/delay/2')
+        response.raise_for_status()
+        context['content'] = 'Results received!'
+        context['current_time'] = datetime.datetime.now()
+        return context
