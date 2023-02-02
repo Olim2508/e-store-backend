@@ -47,3 +47,16 @@ class OrderDetail(models.Model):
 
     def __str__(self):
         return f"{self.id}, order_id={self.order.id}"
+
+
+class Comment(models.Model):
+    text = models.TextField()
+    user = models.ForeignKey(User, on_delete=models.CASCADE)
+    product = models.ForeignKey(Product, on_delete=models.CASCADE)
+    likes = models.IntegerField(default=0)
+    dislikes = models.IntegerField(default=0)
+
+    def __str__(self):
+        return f"{self.product.id} - {self.user}"
+
+

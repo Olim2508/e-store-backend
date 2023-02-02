@@ -5,7 +5,7 @@ from rest_framework import status
 from rest_framework.reverse import reverse_lazy
 from rest_framework.test import APITestCase
 
-from main.models import ProductCategory, Product, Order, OrderDetail
+from main.models import ProductCategory, Product, Order, OrderDetail, Comment
 
 User = get_user_model()
 
@@ -58,5 +58,39 @@ class OrderApiTestCase(APITestCase):
         self.assertEqual(order.user, self.user)
         self.assertTrue(OrderDetail.objects.filter(order=order, product=self.product_1).exists())
 
+
+@tag("comment")
+class CommentApiTestCase(APITestCase):
+    def setUp(self) -> None:
+        self.user = User.objects.create(
+            email='rahmatovolim3@gmail.com', password=make_password('test1235'))
+        self.user.save()
+        self.product_category_1 = ProductCategory.objects.create(title="drinks")
+
+        self.product_1 = Product.objects.create(name="Coca cola", category=self.product_category_1, price=300)
+        self.product_2 = Product.objects.create(name="Fanta", category=self.product_category_1, price=250)
+
+        url = reverse_lazy('auth_app:sign-in')
+        data = {
+            'email': 'rahmatovolim3@gmail.com',
+            'password': 'test1235'
+        }
+        response = self.client.post(url, data)
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.data)
+        self.client.credentials(HTTP_AUTHORIZATION=f'Bearer {response.data["access_token"]}')
+
+    def test_create_comment(self):
+        url = reverse_lazy('main:comment_create')
+        data = {"product_id": 100, "text": "Great product!"}
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
+        data['text'] = ''
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
+        data['product_id'] = self.product_1.id
+        data['text'] = 'Great product!'
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.content)
+        self.assertEqual(Comment.objects.count(), 1)
 
 

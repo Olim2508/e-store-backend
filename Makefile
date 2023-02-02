@@ -9,3 +9,6 @@ req:
 
 styling:
 	flake8 . && black . && isort .
+
+test:
+	python manage.py test

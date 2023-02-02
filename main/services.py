@@ -1,8 +1,12 @@
 from typing import List
 
-from main.models import ProductCategory, Product, Order, OrderDetail
+from django.contrib.auth import get_user_model
+
+from main.models import ProductCategory, Product, Order, OrderDetail, Comment
 from main.utils import except_shell
 
+
+User = get_user_model()
 
 class ProductService:
     @staticmethod
@@ -38,3 +42,9 @@ class OrderService:
         OrderDetail.objects.bulk_create(order_items)
 
 
+class CommentService:
+
+    @staticmethod
+    def create_comment(data: dict, user: User):
+        product = ProductService.get_product_by_id(data['product_id'])
+        return Comment.objects.create(text=data['text'], user=user, product=product)

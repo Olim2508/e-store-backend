@@ -6,7 +6,7 @@ from rest_framework.viewsets import GenericViewSet
 from main.filters import ProductFilter
 from main.models import Product, ProductCategory
 from main.paginators import BasePageNumberPagination
-from main.serializers import ProductCategorySerializer, ProductSerializer, OrderSerializer
+from main.serializers import ProductCategorySerializer, ProductSerializer, OrderSerializer, CommentSerializer
 
 
 class ProductCategoryViewSet(viewsets.ModelViewSet):
@@ -34,7 +34,7 @@ class ProductViewSet(viewsets.ModelViewSet):
         return Response(serializer.data)
 
 
-class OrderCreate(mixins.CreateModelMixin, GenericViewSet):
+class OrderViewSet(mixins.CreateModelMixin, GenericViewSet):
     serializer_class = OrderSerializer
     permission_classes = (IsAuthenticated,)
 
@@ -45,3 +45,7 @@ class OrderCreate(mixins.CreateModelMixin, GenericViewSet):
         headers = self.get_success_headers(serializer.data)
         return Response({"status": True}, status=status.HTTP_201_CREATED, headers=headers)
 
+
+class CommentViewSet(mixins.CreateModelMixin, GenericViewSet):
+    serializer_class = CommentSerializer
+    permission_classes = (IsAuthenticated,)

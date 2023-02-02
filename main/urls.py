@@ -10,7 +10,8 @@ router.register("category", views.ProductCategoryViewSet, basename="category")
 router.register("product", views.ProductViewSet, basename="product")
 
 urlpatterns = [
-    path("order/create/", views.OrderCreate.as_view({"post": "create"}), name='order_create')
+    path("order/create/", views.OrderViewSet.as_view({"post": "create"}), name='order_create'),
+    path("comment/create/", views.CommentViewSet.as_view({"post": "create"}), name='comment_create'),
 ]
 
 urlpatterns += router.urls
