@@ -50,6 +50,6 @@ class CommentService:
         return Comment.objects.create(text=data['text'], user=user, product=product)
 
     @staticmethod
-    @except_shell((Product.DoesNotExist,))
+    @except_shell((Comment.DoesNotExist,))
     def get_comment_by_id(id: int) -> Union[Comment, None]:
         return Comment.objects.get(id=id)
