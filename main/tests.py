@@ -38,8 +38,8 @@ class OrderApiTestCase(APITestCase):
         url = reverse_lazy('main:order_create')
         data = {
             "orders": [
-                {"product_id": 1, "quantity": 3},
-                {"product_id": 2, "quantity": 5},
+                {"product_id": self.product_1.id, "quantity": 3},
+                {"product_id": self.product_2.id, "quantity": 5},
                 {"product_id": 10, "quantity": 4},
             ]
         }
@@ -47,7 +47,7 @@ class OrderApiTestCase(APITestCase):
         self.assertEqual(OrderDetail.objects.count(), 0)
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_400_BAD_REQUEST, response.content)
-        data['orders'][2]['product_id'] = 3
+        data['orders'][2]['product_id'] = self.product_3.id
         response = self.client.post(url, data, format='json')
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.content)
         self.assertEqual(response.json(), {"status": True}, response.content)
