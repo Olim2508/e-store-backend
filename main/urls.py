@@ -12,6 +12,7 @@ router.register("product", views.ProductViewSet, basename="product")
 urlpatterns = [
     path("order/create/", views.OrderViewSet.as_view({"post": "create"}), name='order_create'),
     path("comment/create/", views.CommentViewSet.as_view({"post": "create"}), name='comment_create'),
+    path("comment/list/<int:product_id>/", views.CommentViewSet.as_view({"get": "list"}), name='comment_list'),
 ]
 
 urlpatterns += router.urls

@@ -93,4 +93,21 @@ class CommentApiTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.content)
         self.assertEqual(Comment.objects.count(), 1)
 
+    def test_get_comments(self):
+        url = reverse_lazy('main:comment_create')
+        data = {"product_id": self.product_1.id, "text": "Great product!"}
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.content)
+        data['text'] = 'comment 2 text'
+        response = self.client.post(url, data, format='json')
+        self.assertEqual(response.status_code, status.HTTP_201_CREATED, response.content)
+
+        url = reverse_lazy('main:comment_list', args=[self.product_1.id])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.content)
+        self.assertEqual(len(response.json()), 2)
+        url = reverse_lazy('main:comment_list', args=[100])
+        response = self.client.get(url)
+        self.assertEqual(response.status_code, status.HTTP_200_OK, response.content)
+        self.assertEqual(len(response.json()), 0)
 

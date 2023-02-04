@@ -4,7 +4,7 @@ from rest_framework.response import Response
 from rest_framework.viewsets import GenericViewSet
 
 from main.filters import ProductFilter
-from main.models import Product, ProductCategory
+from main.models import Product, ProductCategory, Comment
 from main.paginators import BasePageNumberPagination
 from main.serializers import ProductCategorySerializer, ProductSerializer, OrderSerializer, CommentSerializer
 
@@ -23,7 +23,6 @@ class ProductViewSet(viewsets.ModelViewSet):
 
     def list(self, request, *args, **kwargs):
         queryset = self.filter_queryset(self.get_queryset())
-        print(self.request.user)
 
         page = self.paginate_queryset(queryset)
         if page is not None:
@@ -46,6 +45,17 @@ class OrderViewSet(mixins.CreateModelMixin, GenericViewSet):
         return Response({"status": True}, status=status.HTTP_201_CREATED, headers=headers)
 
 
-class CommentViewSet(mixins.CreateModelMixin, GenericViewSet):
+class CommentViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, GenericViewSet):
     serializer_class = CommentSerializer
     permission_classes = (IsAuthenticated,)
+    queryset = Comment.objects.all()
+    pagination_class = None
+
+    def get_queryset(self):
+        if self.action == "list":
+            return Comment.objects.filter(product_id=self.kwargs.get("product_id"))
+
+    def list(self, request, *args, **kwargs):
+        queryset = self.filter_queryset(self.get_queryset())
+        serializer = self.get_serializer(queryset, many=True)
+        return Response(serializer.data)
