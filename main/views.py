@@ -1,3 +1,4 @@
+from drf_yasg.utils import swagger_auto_schema
 from rest_framework import viewsets, mixins, status
 from rest_framework.permissions import IsAuthenticated
 from rest_framework.response import Response
@@ -6,7 +7,8 @@ from rest_framework.viewsets import GenericViewSet
 from main.filters import ProductFilter
 from main.models import Product, ProductCategory, Comment
 from main.paginators import BasePageNumberPagination
-from main.serializers import ProductCategorySerializer, ProductSerializer, OrderSerializer, CommentSerializer
+from main.serializers import ProductCategorySerializer, ProductSerializer, OrderSerializer, CommentSerializer, \
+    CommentActionSerializer
 
 
 class ProductCategoryViewSet(viewsets.ModelViewSet):
@@ -46,10 +48,13 @@ class OrderViewSet(mixins.CreateModelMixin, GenericViewSet):
 
 
 class CommentViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, GenericViewSet):
-    serializer_class = CommentSerializer
     permission_classes = (IsAuthenticated,)
-    queryset = Comment.objects.all()
     pagination_class = None
+
+    def get_serializer_class(self):
+        if self.action == 'comment_action':
+            return CommentActionSerializer
+        return CommentSerializer
 
     def get_queryset(self):
         if self.action == "list":
@@ -59,3 +64,12 @@ class CommentViewSet(mixins.CreateModelMixin, mixins.ListModelMixin, GenericView
         queryset = self.filter_queryset(self.get_queryset())
         serializer = self.get_serializer(queryset, many=True)
         return Response(serializer.data)
+
+    @swagger_auto_schema(operation_description='Pass {like: True} for like, {like: False} for dislike')
+    def comment_action(self, request, *args, **kwargs):
+        serializer = self.get_serializer(data=request.data)
+        serializer.is_valid(raise_exception=True)
+        self.perform_create(serializer)
+        return Response(serializer.data, status=status.HTTP_201_CREATED)
+
+

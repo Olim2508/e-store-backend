@@ -1,4 +1,4 @@
-from typing import List
+from typing import List, Union
 
 from django.contrib.auth import get_user_model
 
@@ -11,7 +11,7 @@ User = get_user_model()
 class ProductService:
     @staticmethod
     @except_shell((ProductCategory.DoesNotExist,))
-    def get_category(id: int):
+    def get_category(id: int) -> Union[ProductCategory, None]:
         return ProductCategory.objects.get(id=id)
 
     @staticmethod
@@ -20,7 +20,7 @@ class ProductService:
 
     @staticmethod
     @except_shell((Product.DoesNotExist,))
-    def get_product_by_id(id: int):
+    def get_product_by_id(id: int) -> Union[Product, None]:
         return Product.objects.get(id=id)
 
 
@@ -48,3 +48,8 @@ class CommentService:
     def create_comment(data: dict, user: User):
         product = ProductService.get_product_by_id(data['product_id'])
         return Comment.objects.create(text=data['text'], user=user, product=product)
+
+    @staticmethod
+    @except_shell((Product.DoesNotExist,))
+    def get_comment_by_id(id: int) -> Union[Comment, None]:
+        return Comment.objects.get(id=id)

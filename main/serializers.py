@@ -55,6 +55,7 @@ class OrderSerializer(serializers.Serializer):
 
 
 class CommentSerializer(serializers.Serializer):
+    id = serializers.IntegerField(read_only=True)
     product_id = serializers.IntegerField(required=True, write_only=True)
     text = serializers.CharField(required=True)
     likes = serializers.IntegerField(read_only=True)
@@ -69,3 +70,23 @@ class CommentSerializer(serializers.Serializer):
         user = self.context['request'].user
         comment = CommentService.create_comment(validated_data, user)
         return comment
+
+
+class CommentActionSerializer(serializers.Serializer):
+    comment_id = serializers.IntegerField()
+    like = serializers.BooleanField()
+
+    def validate(self, data: dict):
+        comment = CommentService.get_comment_by_id(data['comment_id'])
+        if not comment:
+            raise ValidationError("Comment doesn't exist")
+        return data
+
+    def save(self, **kwargs):
+        comment = CommentService.get_comment_by_id(self.validated_data['comment_id'])
+        if self.validated_data['like']:
+            comment.likes += 1
+            comment.save(update_fields=['likes'])
+        else:
+            comment.dislikes += 1
+            comment.save(update_fields=['dislikes'])

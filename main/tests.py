@@ -111,3 +111,5 @@ class CommentApiTestCase(APITestCase):
         self.assertEqual(response.status_code, status.HTTP_200_OK, response.content)
         self.assertEqual(len(response.json()), 0)
 
+    # def test_comment_like(self):
+    #     pass
